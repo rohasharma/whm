@@ -18,7 +18,7 @@ Customer Name will be used as a unique identity in the Application (Would have p
 Customer Name will be used while placing the Order so that search mapping will become easy.
 
 # Endpoints
-1) /sku : GET/POST/DELETE/PUT
+## /sku : GET/POST/DELETE/PUT
 GET:
 http://<IP ADDRESS>:5001/sku
   {
