@@ -1,4 +1,3 @@
-DROP database whmdb;
 create schema whmdb;
 use whmdb;
 
