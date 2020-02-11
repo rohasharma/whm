@@ -76,22 +76,24 @@ class OrderLine():
         for ele in lines:
             if not orm.get_sku_by_id(ele["sku"]):
                 raise ex.SkuNotFound()
+        for ele in lines:
             order_line_obj = orm.get_order_by_sku_id(ele["sku"], self.order_id)
-            old_quantity = order_line_obj.quantity
-            new_quantity = ele["quantity"]
+            old_quantity = order_line_obj.quantity  # 30
+            new_quantity = ele["quantity"]  # 20
+            diff_stock_dict = {"add_storage": None,
+                          "dec_storage": None}
             if old_quantity <= new_quantity:
-                diff_stock = new_quantity - old_quantity
-                storage_list = orm.get_storage_by_skuid(ele["sku"], all=True)
-                total_available_stock = utility.calc_available_stock(
-                    storage_list)
-                if diff_stock > total_available_stock:
-                    raise ex.OutOfStockRequest()
-                orm.update_orderline(self.order_id, ele, diff_stock)
-                storage_list_new = orm.get_storage_by_skuid(ele["sku"], all=True)
-                order_line_list.extend(utility.compute_picks(storage_list_new, ele))
+                diff_stock_dict["dec_storage"] = new_quantity - old_quantity # 10
             else:
-                pass
+                diff_stock_dict["add_storage"] = old_quantity - new_quantity
+            storage_list = orm.get_storage_by_skuid(ele["sku"], all=True)
+            total_available_stock = utility.calc_available_stock(
+                storage_list)
+            if diff_stock_dict["dec_storage"] > total_available_stock:
+                raise ex.OutOfStockRequest()
+            order_line_list.extend(utility.update_orderline(self.order_id,
+                                                            ele,
+                                                            diff_stock_dict))
 
         return order_line_list
-
 

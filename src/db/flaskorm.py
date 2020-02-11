@@ -199,19 +199,6 @@ def get_order_line_by_id(order_id):
 
     return  get_order_line
 
-def update_orderline(order_id, ele, newstock):
-    """
-    
-    :param order_id: order id
-    :param ele: individual order
-    :return: 
-    """
-    storage_obj = get_storage_by_skuid(ele["sku"])
-    storage_obj.stock -= newstock
-    order_line_obj = get_order_by_sku_id(ele["sku"], order_id)
-    order_line_obj.quantity = ele["quantity"]
-    db.session.commit()
-
 
 def get_order_by_name(name):
     """
@@ -237,3 +224,11 @@ def get_order_by_sku_id(sku_id, order_id):
 
     return get_order_details
 
+
+def commit_db():
+    """
+
+    :return:
+    """
+
+    db.session.commit()
